@@ -15,7 +15,51 @@ export class Observable {
         }
     }
 
-    subscribe(observer: Observer) {
-        
+    /**
+     * @method
+     * This method is used to add implementation details on what client wants to do with data stream
+     * provided by observable
+     * @param onNext
+     * this param is used to provide implementation details of what should be done if data is provided
+     * from the stream
+     * @param onError
+     * this param is used to provide implementation details of what should be done if data is not provided
+     * due an error
+     * @param onCompleted
+     * this param is used to provide implementation details of what should be done if observable did everything
+     * it was meant to
+     */
+    subscribe(onNext: any, onError?: any, onCompleted?: any) {
+        if (typeof onNext === 'function') {
+            return this._subscribe({
+                onNext: onNext,
+                onError: onError || (() => {}),
+                onCompleted: onCompleted || (() => {})
+            })
+        }
+        return this._subscribe(onNext);
+    }
+
+    /**
+     * @method
+     * this method returns observable that emits value provided as parameter
+     * @param args
+     * arguments to be emitted by observable
+     */
+    static of(...args) {
+        return new Observable((obs) => {
+            args.forEach(val => obs.onNext(val));
+            obs.onCompleted();
+
+            return {
+                unsubscribe: () => {
+                    obs = {
+                        onNext: () => {},
+                        onError: () => {},
+                        onCompleted: () => {}
+                    }
+                }
+            }
+        })
     }
 }
