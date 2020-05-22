@@ -62,4 +62,30 @@ export class Observable {
             }
         })
     }
+    /**
+     * @method
+     * this method takes array as an argument and returns observable that's emitting values
+     * provided by this array
+     * @param args
+     * array of elements that are going to be emitted by inner observable
+     */
+
+    static from(args: any[]) {
+        return new Observable((obs) => {
+            for(const element of args) {
+                obs.onNext(element);
+            }
+            obs.onCompleted();
+            
+            return {
+                unsubscribe:  () => {
+                    obs = {
+                        onNext: () => {},
+                        onError: () => {},
+                        onCompleted: () => {}
+                    }
+                }
+            }
+        })
+    }
 }
