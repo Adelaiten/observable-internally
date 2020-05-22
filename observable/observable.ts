@@ -88,4 +88,25 @@ export class Observable {
             }
         })
     }
+
+
+    /**
+     * 
+     * @method
+     * fromEvent method creates new observable that listen to certain event
+     * @param source 
+     * Source element that observable is going to listen
+     * @param event 
+     * event that should be listened
+     */
+    static fromEvent(source, event) {
+        return new Observable((obs) => {
+            const eventCallback = (event) => obs.onNext(event);
+            source.addEventListener(event, eventCallback);
+
+            return {
+                unsubscribe: () => source.removeEventListener(event, eventCallback)
+            }
+        })
+    }
 }
